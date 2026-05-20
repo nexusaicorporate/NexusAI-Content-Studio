@@ -1,0 +1,15 @@
+{
+  "name": "Nexus Core | Hardware Intelligence Console",
+  "description": "The definitive neural engine for hardware narrative synthesis and strategic deployment.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API",
+    "AI Video Generation",
+    "Smart Image Generation",
+    "URL Content Analysis",
+    "Interactive Revision Chat"
+  ]
+}

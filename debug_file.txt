@@ -1,0 +1,11 @@
+                               </div>
+                             </div>
+                             <div className="flex items-center gap-3">
+                               <button 
+                                 onClick={() => {
+                                   if (confirm('Permanently remove this connection record?')) {
+                                     setSocialConnections(prev => prev.filter(c => c.id !== conn.id));
+                                   }
+                                 }}
+                                 className="text-[10px] font-black uppercase text-red-400 hover:text-red-500 transition-colors"
+                               >

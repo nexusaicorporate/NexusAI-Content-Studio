@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", sans-serif;
+  --font-serif: "Playfair Display", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-space: "Space Grotesk", sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+:root {
+  --background: #020408; /* Deep Obsidian */
+  --foreground: #F8FAFC;
+  --card: #0A0F1A;
+  --card-foreground: #F8FAFC;
+  --popover: #0A0F1A;
+  --popover-foreground: #F8FAFC;
+  --primary: #00F2FF; /* Nexus Electric Cyan */
+  --primary-foreground: #020408;
+  --secondary: #7000FF; /* Nexus Royal Purple */
+  --secondary-foreground: #FFFFFF;
+  --muted: #1A202C;
+  --muted-foreground: #94A3B8;
+  --accent: #00F2FF;
+  --accent-foreground: #020408;
+  --destructive: #FF4D4D;
+  --border: #1E293B;
+  --input: #1E293B;
+  --ring: #00F2FF;
+  --radius: 1rem;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground font-sans antialiased min-h-screen selection:bg-primary/20 selection:text-primary;
+    background-image: 
+      radial-gradient(circle at 0% 0%, rgba(112, 0, 255, 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 100% 100%, rgba(0, 242, 255, 0.08) 0%, transparent 40%);
+  }
+}
+
+/* Nexus Design Utilities */
+.nexus-glass {
+  @apply bg-[#0A0F1A]/80 backdrop-blur-xl border border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.4)];
+}
+
+.nexus-card {
+  @apply bg-[#0D121F] border border-[#1E293B] rounded-3xl p-8 hover:border-primary/30 transition-all duration-500 shadow-xl;
+}
+
+.nexus-input {
+  @apply w-full bg-[#161B29] border border-[#1E293B] rounded-2xl px-6 py-4 font-sans text-sm text-white focus:outline-none focus:ring-1 focus:ring-primary/40 focus:border-primary transition-all placeholder:text-slate-500;
+}
+
+.nexus-btn {
+  @apply px-8 py-4 rounded-2xl font-bold transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3 tracking-tight;
+}
+
+.nexus-btn-primary {
+  @apply bg-primary text-black hover:shadow-[0_0_20px_rgba(0,242,255,0.4)] hover:scale-[1.02];
+}
+
+.nexus-btn-secondary {
+  @apply bg-secondary text-white hover:shadow-[0_0_20px_rgba(112,0,255,0.4)] hover:scale-[1.02];
+}
+
+.nexus-glow-text {
+  text-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+}
+
+.nexus-circuit-bg {
+  background-image: radial-gradient(#1E293B 0.5px, transparent 0.5px);
+  background-size: 24px 24px;
+}
+
+.serif-display {
+  @apply font-serif italic;
+}
+
+.ink-text {
+  @apply text-[#121212];
+}
+
+.video-preview-wrapper {
+  @apply relative rounded-xl overflow-hidden border border-border aspect-video bg-neutral-100;
+}
+
+.avatar-scroll {
+  @apply flex gap-4 overflow-x-auto pb-4 scrollbar-none snap-x;
+}
+
+.avatar-item {
+  @apply flex-shrink-0 w-24 h-24 rounded-full border border-border hover:border-primary transition-all cursor-pointer snap-center overflow-hidden;
+}
+
+.marquee-system {
+  @apply bg-neutral-50 border-y border-border py-2 font-mono text-[9px] uppercase font-bold tracking-widest opacity-60 overflow-hidden relative;
+}
+
+.marquee-inner {
+  @apply inline-block whitespace-nowrap px-4;
+  animation: marquee-slow 60s linear infinite;
+}
+
+@keyframes marquee-slow {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Minimal Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-neutral-200 rounded-full hover:bg-neutral-300;
+}

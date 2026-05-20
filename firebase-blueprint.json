@@ -1,0 +1,115 @@
+{
+  "entities": {
+    "Avatar": {
+      "title": "Avatar",
+      "description": "User persona/identity profile",
+      "type": "object",
+      "properties": {
+        "photoBase64": { "type": "string", "description": "Base64 encoded image data" },
+        "name": { "type": "string", "description": "Name of the persona" },
+        "createdAt": { "type": "number", "description": "Creation timestamp" },
+        "voiceId": { "type": "string", "description": "ID of the associated voice" }
+      },
+      "required": ["photoBase64", "name", "createdAt"]
+    },
+    "BrandKit": {
+      "title": "Brand Kit",
+      "description": "Brand configuration and visual guidelines",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "logo": { "type": "string" },
+        "colors": { "type": "array", "items": { "type": "string" } },
+        "fonts": { "type": "array", "items": { "type": "string" } },
+        "voice": { "type": "string" }
+      }
+    },
+    "ContentTemplate": {
+      "title": "Content Template",
+      "description": "Reusable content structure",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "content": { "type": "string" },
+        "platform": { "type": "string" }
+      }
+    },
+    "ScheduledPost": {
+      "title": "Scheduled Post",
+      "description": "A post queued for delivery",
+      "type": "object",
+      "properties": {
+        "content": { "type": "string" },
+        "scheduledTime": { "type": "number" },
+        "platform": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "delivered", "failed"] }
+      }
+    },
+    "OperationLog": {
+      "title": "Operation Log",
+      "description": "System event or user action log",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "action": { "type": "string" },
+        "details": { "type": "string" },
+        "timestamp": { "type": "number" }
+      },
+      "required": ["userId", "action", "timestamp"]
+    },
+    "UserAccount": {
+      "title": "User Account",
+      "description": "App user profile and permissions",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "isAdmin": { "type": "boolean" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["email", "isAdmin", "createdAt"]
+    },
+    "Voice": {
+      "title": "Voice",
+      "description": "Neural voice profile or cloned signature",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "accent": { "type": "string" },
+        "type": { "type": "string", "enum": ["preset", "custom"] },
+        "audioUrl": { "type": "string" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["name", "accent", "type", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/logs/{logId}": {
+      "schema": "OperationLog",
+      "description": "System-wide activity logs"
+    },
+    "/users/{userId}/profile/info": {
+      "schema": "UserAccount",
+      "description": "Private user profile data"
+    },
+    "/users/{userId}/avatars/{avatarId}": {
+      "schema": "Avatar",
+      "description": "User identity vault"
+    },
+    "/users/{userId}/voices/{voiceId}": {
+      "schema": "Voice",
+      "description": "User custom voice signatures"
+    },
+    "/users/{userId}/config/brand": {
+      "schema": "BrandKit",
+      "description": "User brand configuration"
+    },
+    "/users/{userId}/templates/{templateId}": {
+      "schema": "ContentTemplate",
+      "description": "Saved content templates"
+    },
+    "/users/{userId}/schedule/{postId}": {
+      "schema": "ScheduledPost",
+      "description": "Queued posts"
+    }
+  }
+}

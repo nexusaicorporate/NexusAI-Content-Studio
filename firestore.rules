@@ -1,0 +1,114 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidVoice(data) {
+      return data.keys().hasAll(['name', 'accent', 'type', 'createdAt']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.accent is string && data.accent.size() > 0 && data.accent.size() <= 100 &&
+             data.type in ['preset', 'custom'] &&
+             data.createdAt is number &&
+             (!('audioUrl' in data) || (data.audioUrl is string && data.audioUrl.size() <= 2048));
+    }
+
+    function isValidAvatar(data) {
+      return data.keys().hasAll(['photoBase64', 'name', 'createdAt']) &&
+             data.photoBase64 is string && data.photoBase64.size() > 0 && data.photoBase64.size() <= 1048576 &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.createdAt is number &&
+             (!('voiceId' in data) || (data.voiceId is string && data.voiceId.size() <= 128));
+    }
+
+    function isValidBrandKit(data) {
+      return data.keys().hasAll(['name', 'logo', 'colors', 'fonts', 'voice']) &&
+             data.name is string && data.logo is string &&
+             data.colors is list && data.fonts is list &&
+             data.voice is string;
+    }
+
+    function isValidTemplate(data) {
+      return data.keys().hasAll(['name', 'content', 'platform']) &&
+             data.name is string && data.content is string && data.platform is string;
+    }
+
+    function isValidScheduledPost(data) {
+      return data.keys().hasAll(['content', 'scheduledTime', 'platform', 'status']) &&
+             data.content is string && data.scheduledTime is number &&
+             data.platform is string && data.status in ['pending', 'delivered', 'failed'];
+    }
+
+    // Admin-only collections
+    match /admins/{adminId} {
+      allow read: if isSignedIn(); // Allow checking if self is admin
+      allow write: if false; // Only manageable via console
+    }
+
+    // System Logs
+    match /logs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+
+    // User data match blocks
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      
+      match /profile/info {
+        allow read: if isOwner(userId) || isAdmin();
+        allow write: if isOwner(userId);
+      }
+
+      match /avatars/{avatarId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId) && isValidAvatar(request.resource.data);
+        allow update: if isOwner(userId) && isValidAvatar(request.resource.data) &&
+                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['photoBase64', 'name', 'voiceId']);
+        allow delete: if isOwner(userId);
+      }
+      
+      match /voices/{voiceId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId) && isValidVoice(request.resource.data);
+        allow update: if isOwner(userId) && isValidVoice(request.resource.data) && 
+                      request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'accent', 'audioUrl']);
+        allow delete: if isOwner(userId);
+      }
+
+      match /config/brand {
+        allow read: if isOwner(userId) || isAdmin();
+        allow write: if isOwner(userId) && isValidBrandKit(request.resource.data);
+      }
+
+      match /templates/{templateId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow write: if isOwner(userId) && isValidTemplate(request.resource.data);
+      }
+
+      match /schedule/{postId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow write: if isOwner(userId) && isValidScheduledPost(request.resource.data);
+      }
+    }
+  }
+}
