@@ -1,0 +1,15 @@
+paths:
+  static: ''
+  uploads: uploads
+timezone: America/New_York
+markdown:
+  engine: commonmark
+  options:
+    html: true
+collections_config:
+  pages:
+    path: ''
+    icon: wysiwyg
+  investors:
+    path: Investors
+    icon: inventory
